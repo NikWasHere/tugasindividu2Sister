@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'distributed-nodes'
+    static_configs:
+      - targets: 
+        - 'node-1:9090'
+        - 'node-2:9090'
+        - 'node-3:9090'
+        labels:
+          cluster: 'distributed-sync'
+  
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']

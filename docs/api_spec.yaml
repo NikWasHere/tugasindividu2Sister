@@ -1,0 +1,474 @@
+openapi: 3.0.3
+info:
+  title: Distributed Synchronization System API
+  description: |
+    API untuk Distributed Synchronization System yang mengimplementasikan:
+    - Distributed Lock Manager (Raft Consensus)
+    - Distributed Queue System (Consistent Hashing)
+    - Distributed Cache Coherence (MESI Protocol)
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@distributed-sync.com
+
+servers:
+  - url: http://localhost:5000
+    description: Node 1 (Development)
+  - url: http://localhost:5001
+    description: Node 2 (Development)
+  - url: http://localhost:5002
+    description: Node 3 (Development)
+
+tags:
+  - name: Lock Manager
+    description: Distributed lock operations
+  - name: Queue
+    description: Distributed queue operations
+  - name: Cache
+    description: Distributed cache operations
+  - name: System
+    description: System status and monitoring
+
+paths:
+  /health:
+    get:
+      tags:
+        - System
+      summary: Health check endpoint
+      description: Check if node is healthy
+      responses:
+        '200':
+          description: Node is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  node_id:
+                    type: string
+                    example: node-1
+
+  /status:
+    get:
+      tags:
+        - System
+      summary: Get node status
+      description: Get detailed node status including Raft state
+      responses:
+        '200':
+          description: Node status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeStatus'
+
+  /lock/acquire:
+    post:
+      tags:
+        - Lock Manager
+      summary: Acquire distributed lock
+      description: Acquire a shared or exclusive lock on a resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockAcquireRequest'
+      responses:
+        '200':
+          description: Lock acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  resource_id:
+                    type: string
+                  lock_type:
+                    type: string
+        '408':
+          description: Lock acquisition timeout
+        '409':
+          description: Deadlock detected
+        '503':
+          description: Not leader, redirect to leader
+
+  /lock/release:
+    post:
+      tags:
+        - Lock Manager
+      summary: Release distributed lock
+      description: Release a previously acquired lock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockReleaseRequest'
+      responses:
+        '200':
+          description: Lock released successfully
+        '404':
+          description: Lock not found
+        '503':
+          description: Not leader
+
+  /lock/status/{resource_id}:
+    get:
+      tags:
+        - Lock Manager
+      summary: Get lock status
+      description: Get status of a specific lock
+      parameters:
+        - name: resource_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lock status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockStatus'
+        '404':
+          description: Lock not found
+
+  /queue/produce:
+    post:
+      tags:
+        - Queue
+      summary: Produce message
+      description: Produce a message to the distributed queue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProduceRequest'
+      responses:
+        '200':
+          description: Message produced
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message_id:
+                    type: string
+                  partition:
+                    type: integer
+
+  /queue/consume:
+    get:
+      tags:
+        - Queue
+      summary: Consume message
+      description: Consume a message from the queue
+      parameters:
+        - name: partition
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: consumer_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: timeout
+          in: query
+          schema:
+            type: number
+            default: 5.0
+      responses:
+        '200':
+          description: Message consumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '204':
+          description: No messages available
+
+  /queue/acknowledge:
+    post:
+      tags:
+        - Queue
+      summary: Acknowledge message
+      description: Acknowledge successful message processing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcknowledgeRequest'
+      responses:
+        '200':
+          description: Message acknowledged
+        '404':
+          description: Message not found in pending acks
+
+  /queue/stats:
+    get:
+      tags:
+        - Queue
+      summary: Get queue statistics
+      description: Get statistics about queue performance
+      responses:
+        '200':
+          description: Queue statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStats'
+
+  /cache/read:
+    get:
+      tags:
+        - Cache
+      summary: Read from cache
+      description: Read a value from distributed cache
+      parameters:
+        - name: key
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cache hit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  value:
+                    type: object
+                  state:
+                    type: string
+                    enum: [M, E, S, I]
+        '404':
+          description: Cache miss
+
+  /cache/write:
+    post:
+      tags:
+        - Cache
+      summary: Write to cache
+      description: Write a value to distributed cache
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CacheWriteRequest'
+      responses:
+        '200':
+          description: Write successful
+        '503':
+          description: Not leader
+
+  /cache/invalidate/{key}:
+    delete:
+      tags:
+        - Cache
+      summary: Invalidate cache line
+      description: Invalidate a cache line across all nodes
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cache invalidated
+        '404':
+          description: Key not in cache
+
+  /cache/stats:
+    get:
+      tags:
+        - Cache
+      summary: Get cache statistics
+      description: Get cache performance statistics
+      responses:
+        '200':
+          description: Cache statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheStats'
+
+  /metrics:
+    get:
+      tags:
+        - System
+      summary: Prometheus metrics
+      description: Get Prometheus-compatible metrics
+      responses:
+        '200':
+          description: Metrics in Prometheus format
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    LockAcquireRequest:
+      type: object
+      required:
+        - resource_id
+        - lock_type
+        - client_id
+      properties:
+        resource_id:
+          type: string
+          description: Resource to lock
+        lock_type:
+          type: string
+          enum: [shared, exclusive]
+        client_id:
+          type: string
+          description: Client identifier
+        timeout:
+          type: number
+          default: 30.0
+          description: Timeout in seconds
+
+    LockReleaseRequest:
+      type: object
+      required:
+        - resource_id
+        - client_id
+      properties:
+        resource_id:
+          type: string
+        client_id:
+          type: string
+
+    LockStatus:
+      type: object
+      properties:
+        resource_id:
+          type: string
+        lock_type:
+          type: string
+        holders:
+          type: array
+          items:
+            type: string
+        waiters:
+          type: integer
+        acquired_at:
+          type: number
+
+    ProduceRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Message payload
+        partition_key:
+          type: string
+          description: Key for partition selection
+
+    Message:
+      type: object
+      properties:
+        message_id:
+          type: string
+        partition:
+          type: integer
+        data:
+          type: object
+        timestamp:
+          type: number
+        attempts:
+          type: integer
+
+    AcknowledgeRequest:
+      type: object
+      required:
+        - consumer_id
+        - message_id
+      properties:
+        consumer_id:
+          type: string
+        message_id:
+          type: string
+
+    CacheWriteRequest:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+        value:
+          type: object
+
+    NodeStatus:
+      type: object
+      properties:
+        node_id:
+          type: string
+        node_type:
+          type: string
+        running:
+          type: boolean
+        raft_state:
+          type: object
+          properties:
+            state:
+              type: string
+              enum: [follower, candidate, leader]
+            term:
+              type: integer
+            commit_index:
+              type: integer
+            log_size:
+              type: integer
+
+    QueueStats:
+      type: object
+      properties:
+        produced:
+          type: integer
+        consumed:
+          type: integer
+        redelivered:
+          type: integer
+        total_queued:
+          type: integer
+        pending_acks:
+          type: integer
+
+    CacheStats:
+      type: object
+      properties:
+        hits:
+          type: integer
+        misses:
+          type: integer
+        hit_rate:
+          type: number
+        invalidations:
+          type: integer
+        cache_size:
+          type: integer
+        writebacks:
+          type: integer
