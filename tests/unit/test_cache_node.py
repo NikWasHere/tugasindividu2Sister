@@ -19,12 +19,11 @@ class TestCacheNode:
         """Test LRU cache"""
         cache = LRUCache(capacity_mb=1)
         
-        # Add items
         from src.nodes.cache_node import CacheLine
         cache.put("key1", CacheLine("key1", "value1", CacheState.EXCLUSIVE, 0))
         cache.put("key2", CacheLine("key2", "value2", CacheState.EXCLUSIVE, 0))
         
-        # Get item (moves to end)
+
         line = cache.get("key1")
         assert line is not None
         assert line.value == "value1"
@@ -34,7 +33,6 @@ class TestCacheNode:
         cache_node = CacheNode("test-node-1")
         await cache_node.start()
         
-        # Read non-existent key
         value = await cache_node.read("non-existent")
         
         assert cache_node.stats['misses'] == 1
@@ -47,13 +45,11 @@ class TestCacheNode:
         
         from src.nodes.cache_node import CacheLine
         
-        # Invalid -> Exclusive
         line = CacheLine("key1", "value1", CacheState.EXCLUSIVE, 0)
         assert line.state == CacheState.EXCLUSIVE
         
-        # Exclusive -> Modified
         line.state = CacheState.MODIFIED
-        assert line.dirty == False  # dirty flag set in __post_init__
+        assert line.dirty == False  
 
 
 if __name__ == "__main__":

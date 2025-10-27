@@ -4,8 +4,8 @@
 
 ---
 
-**Nama**: [Nama Mahasiswa]  
-**NIM**: [NIM Mahasiswa]  
+**Nama**: [niko afandi saputro]  
+**NIM**: [11221039]  
 **Mata Kuliah**: Sistem Parallel dan Terdistribusi  
 **Semester**: 7  
 **Tahun Akademik**: 2024/2025  
@@ -556,26 +556,3 @@ Using Locust:
 ### 9.1. Source Code
 
 [Link to GitHub Repository]
-
-### 9.2. Screenshots
-
-[Insert screenshots of:
-- System running
-- Prometheus dashboard
-- Load test results
-- Log samples]
-
-### 9.3. Benchmark Results
-
-[Insert detailed benchmark results dan graphs]
-
-### 9.4. API Documentation
-
-[Link to API documentation atau include full OpenAPI spec]
-
----
-
-**Tanggal**: [Tanggal Pengumpulan]  
-**Tanda Tangan**: _________________
-
----

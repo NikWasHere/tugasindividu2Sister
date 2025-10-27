@@ -1,8 +1,8 @@
 # Distributed Synchronization System
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](https://www.docker.com/)
+**GitHub**: [https://github.com/NikWasHere/tugasindividu2Sister.git]
+**Documentation**: `/pdf` folder
+**Link YouTube**: [https://youtu.be/HoywBDfEIr8]
 
 ## 📋 Deskripsi Project
 
@@ -14,28 +14,27 @@ Sistem sinkronisasi terdistribusi yang mengimplementasikan distributed lock mana
 
 ## 🎯 Fitur Utama
 
-### 1. Distributed Lock Manager (Raft Consensus) - 25 poin ✅
+### 1. Distributed Lock Manager (Raft Consensus) - 25 poin 
 - ✅ **Raft Consensus Algorithm**: Implementasi lengkap dengan leader election, log replication
 - ✅ **Shared & Exclusive Locks**: Support untuk multiple lock types
 - ✅ **Minimum 3 Nodes**: Cluster dengan minimum 3 nodes untuk fault tolerance
 - ✅ **Network Partition Handling**: Automatic recovery dari network partitions
 - ✅ **Deadlock Detection**: Wait-for graph dengan cycle detection dan automatic resolution
 
-### 2. Distributed Queue System (Consistent Hashing) - 20 poin ✅
+### 2. Distributed Queue System (Consistent Hashing) - 20 poin 
 - ✅ **Consistent Hashing**: Virtual nodes untuk load balancing yang efisien
 - ✅ **Multiple Producers/Consumers**: Support untuk concurrent producers dan consumers
 - ✅ **Message Persistence**: Redis-backed persistence untuk durability
 - ✅ **Node Failure Recovery**: Automatic message redelivery pada node failure
 - ✅ **At-least-once Delivery**: Guarantee dengan acknowledgment tracking
 
-### 3. Distributed Cache Coherence (MESI Protocol) - 15 poin ✅
 - ✅ **MESI Protocol**: Full implementation (Modified, Exclusive, Shared, Invalid)
 - ✅ **Multiple Cache Nodes**: Distributed cache dengan consistency guarantee
 - ✅ **Cache Invalidation**: Automatic invalidation dan update propagation
 - ✅ **LRU Replacement Policy**: Efficient memory management
 - ✅ **Performance Monitoring**: Comprehensive metrics collection
 
-### 4. Containerization (Docker) - 10 poin ✅
+### 4. Containerization (Docker) - 10 poin 
 - ✅ **Multi-container Setup**: Dockerfile untuk setiap komponen
 - ✅ **Docker Compose**: Orchestration untuk 3-node cluster + Redis
 - ✅ **Dynamic Scaling**: Support untuk scaling nodes secara dinamis
@@ -176,8 +175,7 @@ Script ini akan menampilkan contoh request/response untuk semua API endpoints.
 - [API Specification](docs/api_spec.yaml)
 - [Deployment Guide](docs/deployment_guide.md)
 - [Performance Analysis](docs/performance_analysis.md)
-- 🆕 [Video Presentation Script](scripts/video_presentation_script.md)
-- 🆕 [API Testing Guide](scripts/QUICKSTART_API.md)
+- [API Testing Guide](scripts/QUICKSTART_API.md)
 
 ## 🧪 Testing
 
@@ -230,10 +228,11 @@ Hasil benchmarking pada environment:
 | 5-Node Cluster | 45K req/s | 15ms | 99.95% |
 
 ## 🎥 Video Demonstration
+**GitHub**: [Your GitHub Profile]
+**Documentation**: `/pdf` folder
+**Link YouTube**: [https://youtu.be/HoywBDfEIr8]
 
-**Link YouTube**: [Akan diisi setelah upload]
-
-**Durasi**: 12 menit  
+**Durasi**: 12 menit+  
 **Bahasa**: Indonesia  
 
 ### Outline Video:
@@ -348,9 +347,4 @@ MIT License - Untuk keperluan akademik
 - **Consistent Hashing**: "Consistent Hashing and Random Trees" - Karger et al.
 - **Failure Detection**: "The φ Accrual Failure Detector" - Hayashibara et al.
 
-## 📞 Contact & Support
 
-- **GitHub**: [Your GitHub Profile]
-- **Email**: [Your Email]
-- **Documentation**: `/docs` folder
-- **Issues**: GitHub Issues tab

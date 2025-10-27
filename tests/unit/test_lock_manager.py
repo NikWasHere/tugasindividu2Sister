@@ -20,10 +20,8 @@ class TestLockManager:
         lock_mgr = LockManager("test-node-1")
         await lock_mgr.start()
         
-        # Make this node the leader
         lock_mgr.raft.state = RaftState.LEADER
         
-        # Acquire exclusive lock
         success = await lock_mgr.acquire_lock(
             "resource-1", 
             LockType.EXCLUSIVE, 
@@ -42,7 +40,6 @@ class TestLockManager:
         
         lock_mgr.raft.state = RaftState.LEADER
         
-        # Acquire shared locks
         success1 = await lock_mgr.acquire_lock(
             "resource-1", 
             LockType.SHARED, 
@@ -64,7 +61,6 @@ class TestLockManager:
         """Test deadlock detection"""
         lock_mgr = LockManager("test-node-1")
         
-        # Create circular dependency
         lock_mgr.deadlock_detector.add_edge("client-1", "client-2")
         lock_mgr.deadlock_detector.add_edge("client-2", "client-3")
         lock_mgr.deadlock_detector.add_edge("client-3", "client-1")

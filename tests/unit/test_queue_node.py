@@ -20,7 +20,6 @@ class TestQueueNode:
         queue_node = QueueNode("test-node-1")
         await queue_node.start()
         
-        # Produce message
         msg_id = await queue_node.produce(
             data={"test": "data"},
             partition_key="test-key"
@@ -36,7 +35,6 @@ class TestQueueNode:
         queue_node = QueueNode("test-node-1")
         await queue_node.start()
         
-        # Produce message
         partition = 0
         queue_node.partitions[partition].append(
             Message(
@@ -46,7 +44,6 @@ class TestQueueNode:
             )
         )
         
-        # Consume message
         msg = await queue_node.consume(partition, "consumer-1", timeout=1.0)
         
         assert msg is not None
@@ -58,7 +55,6 @@ class TestQueueNode:
         """Test consistent hashing"""
         queue_node = QueueNode("test-node-1")
         
-        # Test same key maps to same partition
         partition1 = queue_node._get_partition("test-key")
         partition2 = queue_node._get_partition("test-key")
         
